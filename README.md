@@ -9,3 +9,4 @@ Go to [https://github.com/herumi/mcl](https://github.com/herumi/mcl) and follow 
 - cd mcl
 - mkdir build
 - cmake -DCMAKE_CXX_COMPILER=clang++ .
+- pip install mcl
