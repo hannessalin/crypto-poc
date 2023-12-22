@@ -8,5 +8,9 @@ Go to [https://github.com/herumi/mcl](https://github.com/herumi/mcl) and follow 
 - git clone https://github.com/herumi/mcl
 - cd mcl
 - mkdir build
-- cmake -DCMAKE_CXX_COMPILER=clang++ .
+- cd build
+- cmake .. -DCMAKE_CXX_COMPILER=clang++
+- cd ..
+- make
 - pip install mcl
+- The installation of mcl was set to /home/hsalin/mcl/mcl, therefore a path was needed: EXPORT MCL_PATH=/home/hsalin/mcl/mcl
