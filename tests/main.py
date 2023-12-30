@@ -730,20 +730,7 @@ if run_p2 == True:
  #   print("P2 MA 10000 nodes run-time: ", f'{(time_p2_ma10000_stop-time_p2_ma10000_start)/1000:.10f}')
 
     sbig, v_arr, c_arr = P2_MA(act_id)
-
     PKlist = [(xbig_id, rbig_id, n_id)]
-
-    time_p2_ade_start = time.time()
-    for i in range(1000):
-        P2_ADe_1(A,SK, PKlist, act_id, sbig, g2)
-    time_p2_ade_stop = time.time()
-    print("P2 ADe MPAE-1 run-time: ", f'{(time_p2_ade_stop-time_p2_ade_start)/1000:.10f}')
-
-    time_p2_ade2_start = time.time()
-    for i in range(1000):
-        P2_ADe_2(A,SK, PKlist, act_id, sbig, g2)
-    time_p2_ade2_stop = time.time()
-    print("P2 ADe MPAE-2 run-time: ", f'{(time_p2_ade2_stop-time_p2_ade2_start)/1000:.10f}')
 
     # 100 PKlist
     PKlist_100 = [(xbig_id, rbig_id, n_id) for _ in range(100)]
@@ -754,8 +741,46 @@ if run_p2 == True:
     # 1000 PKlist
     PKlist_10000 = [(xbig_id, rbig_id, n_id) for _ in range(10000)]
 
+    time_p2_ade_start = time.time()
+    for i in range(1000):
+        P2_ADe_1(A,SK, PKlist, act_id, sbig, g2)
+    time_p2_ade_stop = time.time()
+    print("P2 ADe MPAE-1 run-time: ", f'{(time_p2_ade_stop-time_p2_ade_start)/1000:.10f}')
+
+    time_p2_ade1_100_start = time.time()
+    P2_ADe_1(A,SK, PKlist_100, act_id_100, sbig, g2)
+    time_p2_ade1_100_stop = time.time()
+    print("P2 ADe 100 MPAE-1 run-time: ", f'{(time_p2_ade1_100_stop-time_p2_ade1_100_start):.10f}')
+
+    time_p2_ade1_1000_start = time.time()
+    P2_ADe_1(A,SK, PKlist_1000, act_id_1000, sbig, g2)
+    time_p2_ade1_1000_stop = time.time()
+    print("P2 ADe 1000 MPAE-1 run-time: ", f'{(time_p2_ade1_1000_stop-time_p2_ade1_1000_start):.10f}')
+
+    time_p2_ade1_10000_start = time.time()
+    P2_ADe_1(A,SK, PKlist_10000, act_id_10000, sbig, g2)
+    time_p2_ade1_10000_stop = time.time()
+    print("P2 ADe 10000 MPAE-1 run-time: ", f'{(time_p2_ade1_10000_stop-time_p2_ade1_10000_start):.10f}')
+
+# ADe MPAE-2 scaling
+
     time_p2_ade2_start = time.time()
     for i in range(1000):
         P2_ADe_2(A,SK, PKlist, act_id, sbig, g2)
     time_p2_ade2_stop = time.time()
     print("P2 ADe MPAE-2 run-time: ", f'{(time_p2_ade2_stop-time_p2_ade2_start)/1000:.10f}')
+
+    time_p2_ade2_100_start = time.time()
+    P2_ADe_2(A,SK, PKlist_100, act_id_100, sbig, g2)
+    time_p2_ade2_100_stop = time.time()
+    print("P2 ADe 100 MPAE-2 run-time: ", f'{(time_p2_ade2_100_stop-time_p2_ade2_100_start):.10f}')
+
+    time_p2_ade2_1000_start = time.time()
+    P2_ADe_2(A,SK, PKlist_1000, act_id_1000, sbig, g2)
+    time_p2_ade2_1000_stop = time.time()
+    print("P2 ADe 1000 MPAE-2 run-time: ", f'{(time_p2_ade2_1000_stop-time_p2_ade2_1000_start):.10f}')
+
+    time_p2_ade2_10000_start = time.time()
+    P2_ADe_2(A,SK, PKlist_10000, act_id_10000, sbig, g2)
+    time_p2_ade2_10000_stop = time.time()
+    print("P2 ADe 10000 MPAE-2 run-time: ", f'{(time_p2_ade2_10000_stop-time_p2_ade2_10000_start):.10f}')
