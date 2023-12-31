@@ -453,11 +453,72 @@ def P2_ADe_2(A,SK,PKlist,act,bigs,g2):
         message_list.append(m)
     return message_list
 
+def P3_InitRF(sk):
+    sk1 = Fr()
+    sk1.setByCSPRNG()
+    sk2 = sk - sk1
+    # then store sk1 in HSM1 and sk2 in HSM2
+    return (sk1,sk2)
+
+def P3_RF(sk1, sk2):
+    xi = Fr()
+    xi.setByCSPRNG()
+    sk1new = sk1 + xi
+    sk2new = sk2 - xi
+    return (sk1new, sk2new)
+
+def P3_SignRF(m, sk1, sk2):
+    h1 = G1().hashAndMapTo(m.encode('utf-8'))
+    f1 = h1 * sk1
+    f2 = h1 * sk2
+    sigma = f1 + f2
+    return sigma
+
+def P4_RignSign(m, PKSsign):
+    sigma_agg = G1()
+    for (s,p) in PKSsign:
+        h1 = G1().hashAndMapTo(m.encode('utf-8'))
+        h1 = h1 * s
+        sigma_agg = sigma_agg + h1
+    return sigma_agg
+
+def P4_RingVerify(m, g2, sigma_acc, PKsign):
+    agg_ver = GT()
+    for (s,p) in PKsign:
+        h1 = G1().hashAndMapTo(m.encode('utf-8'))
+        vright = GT().pairing(h1,p)
+        agg_ver = agg_ver + vright
+    vleft = GT().pairing(sigma_acc,g2)
+    return True
+
+def P4_OnionHiding(m, sigma, rsa_sk, PKSenc):
+
+    # preparing for sending to server
+    # c0 = f"{m},{sigma}"
+    c0 = 'dummy message'
+    e_i = rsa_encryption(PKSenc[0], c0)
+
+    for p in PKSenc[1:]:  # Start from the second element
+        # Convert the encrypted result to a string
+        # e_i_str = e_i.hex()
+        e_i_str = c0
+
+        # Encrypt the previous result
+        e_i = rsa_encryption(p, e_i_str)
+
+    # after receiving from server, simulating n number of onions
+    for e in PKSenc:
+        d_i = rsa_decryption(rsa_sk, e_i)
+
+    # simulate shuffle
+    os.urandom(32)
+
+
 run_fundamentals = False
 run_p1 = False
-run_p2 = True
+run_p2 = False
 run_p3 = False
-run_p4 = False
+run_p4 = True
 
 
 G1_STR = b"1 3685416753713387016781088315183077757961620795782546409894578378688607592378376318836054947676345821548104185464507 1339506544944476473020471379941921221584933875938349620426543736416511423956333506472724655353366534992391756441569"
@@ -476,7 +537,7 @@ g2 = G2()
 g2.setStr(G2_STR)
 gt = GT().pairing(g1,g2)
 
-message_paper_1 = 'secret message'
+message_to_use = 'secret message'
 
 if run_fundamentals == True:
     time_1_start = time.time()
@@ -603,27 +664,27 @@ if run_p1 == True:
 
     time_p1_id_start = time.time()
     for i in range(1000):
-        s1hat,r1big = P1_Id(g1,ski,message_paper_1)
+        s1hat,r1big = P1_Id(g1, ski, message_to_use)
     time_p1_id_stop = time.time()
     print("P1 Id run-time: ", f'{(time_p1_id_stop-time_p1_id_start)/1000:.10f}')
 
-    s1hat, r1big = P1_Id(g1, ski, message_paper_1)
+    s1hat, r1big = P1_Id(g1, ski, message_to_use)
     time_p1_ver_start = time.time()
     for i in range(1000):
-        P1_Ver(g2, pki, s1hat, r1big, message_paper_1)
+        P1_Ver(g2, pki, s1hat, r1big, message_to_use)
     time_p1_ver_stop = time.time()
     print("P1 Id run-time: ", f'{(time_p1_ver_stop-time_p1_ver_start)/1000:.10f}')
 
     time_p1_sc_start = time.time()
     for i in range(1000):
-        P1_SC(g1, skp, s1hat, r1big, message_paper_1, pkr)
+        P1_SC(g1, skp, s1hat, r1big, message_to_use, pkr)
     time_p1_sc_stop = time.time()
     print("P1 SC run-time: ", f'{(time_p1_sc_stop-time_p1_sc_start)/1000:.10f}')
 
-    bigshat,r1big,r2bighat,c,k1,k2 = P1_SC(g1, skp, s1hat, r1big, message_paper_1, pkr)
+    bigshat,r1big,r2bighat,c,k1,k2 = P1_SC(g1, skp, s1hat, r1big, message_to_use, pkr)
     time_p1_usc_start = time.time()
     for i in range(1000):
-        P1_USC(g2,skr,pki,pkp,bigshat,r1big,r2bighat,c,k1,k2,message_paper_1)
+        P1_USC(g2, skr, pki, pkp, bigshat, r1big, r2bighat, c, k1, k2, message_to_use)
     time_p1_usc_stop = time.time()
     print("P1 USC run-time: ", f'{(time_p1_usc_stop-time_p1_sc_start)/1000:.10f}')
 
@@ -679,18 +740,18 @@ if run_p2 == True:
     SK, PK = P2_PKeyGen(x_id, A, upkid, ippkid, ipskid)
     time_p2_aen1_start = time.time()
     for i in range(1000):
-        P2_AEn_1(g1, A, PK, SK, PK, message_paper_1)
+        P2_AEn_1(g1, A, PK, SK, PK, message_to_use)
     time_p2_aen1_stop = time.time()
     print("P2 AEN MPAE-1 run-time: ", f'{(time_p2_aen1_stop-time_p2_aen1_start)/1000:.10f}')
 
     time_p2_aen2_start = time.time()
     for i in range(1000):
-        P2_AEn_2(g1, A, PK, SK, PK, message_paper_1)
+        P2_AEn_2(g1, A, PK, SK, PK, message_to_use)
     time_p2_aen2_stop = time.time()
     print("P2 AEN MPAE-2 run-time: ", f'{(time_p2_aen2_stop-time_p2_aen2_start)/1000:.10f}')
 
-    sidhat_1, vbig_id_1, c_id_1 = P2_AEn_1(g1, A, PK, SK, PK, message_paper_1)
-    sidhat_2, vbig_id_2, c_id_2 = P2_AEn_2(g1, A, PK, SK, PK, message_paper_1)
+    sidhat_1, vbig_id_1, c_id_1 = P2_AEn_1(g1, A, PK, SK, PK, message_to_use)
+    sidhat_2, vbig_id_2, c_id_2 = P2_AEn_2(g1, A, PK, SK, PK, message_to_use)
 
     # single act_id
     act_id = [(sidhat_1, vbig_id_1, c_id_1)]
@@ -723,11 +784,11 @@ if run_p2 == True:
     time_p2_ma1000_stop = time.time()
     print("P2 MA 1000 nodes run-time: ", f'{(time_p2_ma1000_stop-time_p2_ma1000_start)/1000:.10f}')
 
- #   time_p2_ma10000_start = time.time()
- #   for i in range(1000):
- #       P2_MA(act_id_10000)
- #   time_p2_ma10000_stop = time.time()
- #   print("P2 MA 10000 nodes run-time: ", f'{(time_p2_ma10000_stop-time_p2_ma10000_start)/1000:.10f}')
+    time_p2_ma10000_start = time.time()
+    for i in range(1000):
+        P2_MA(act_id_10000)
+    time_p2_ma10000_stop = time.time()
+    print("P2 MA 10000 nodes run-time: ", f'{(time_p2_ma10000_stop-time_p2_ma10000_start)/1000:.10f}')
 
     sbig, v_arr, c_arr = P2_MA(act_id)
     PKlist = [(xbig_id, rbig_id, n_id)]
@@ -784,3 +845,107 @@ if run_p2 == True:
     P2_ADe_2(A,SK, PKlist_10000, act_id_10000, sbig, g2)
     time_p2_ade2_10000_stop = time.time()
     print("P2 ADe 10000 MPAE-2 run-time: ", f'{(time_p2_ade2_10000_stop-time_p2_ade2_10000_start):.10f}')
+
+
+if run_p3 == True:
+    sk = Fr()
+    sk.setByCSPRNG()
+
+    time_p3init_start = time.time()
+    for i in range(1000):
+        P3_InitRF(sk)
+    time_p3init_stop = time.time()
+    print("P3 InitRF run-time: ", f'{(time_p3init_stop-time_p3init_start)/1000:.10f}')
+
+    sk1,sk2 = P3_InitRF(sk)
+    time_p3rf_start = time.time()
+    for i in range(1000):
+        P3_RF(sk1, sk2)
+    time_p3rf_stop = time.time()
+    print("P3 RF run-time: ", f'{(time_p3rf_stop-time_p3rf_start)/1000:.10f}')
+
+    sk1new, sk2new = P3_RF(sk1,sk2)
+    time_p3sig_start = time.time()
+    for i in range(1000):
+        P3_SignRF('some message', sk1new, sk2new)
+    time_p3sig_stop = time.time()
+    print("P3 SignRF run-time: ", f'{(time_p3sig_stop-time_p3sig_start)/1000:.10f}')
+
+    # note that verification is a BlS verification, hence we do not implement it here.
+
+if run_p4 == True:
+    # pargen and keygen
+    rsa_private_key_p4, rsa_public_key_p4 = generate_rsa_key_pair()
+    PKSenc = [rsa_public_key_p4]
+    ringsignsk = Fr()
+    ringsignsk.setByCSPRNG()
+    ringsignpk = G2()
+    ringsignpk = g2 * ringsignsk
+    PKSsign = [(ringsignsk, ringsignpk)]
+
+    sigma = P4_RignSign(message_to_use, PKSsign)
+    P4_RingVerify(message_to_use, g2, sigma, PKSsign)
+    P4_OnionHiding(message_to_use, sigma, rsa_private_key_p4,PKSenc)
+
+    time_p4rsig_start = time.time()
+    for i in range(1000):
+        P4_RignSign(message_to_use, PKSsign)
+    time_p4rsig_stop = time.time()
+    print("P4 RingSign run-time: ", f'{(time_p4rsig_stop-time_p4rsig_start)/1000:.10f}')
+
+    time_p4rver_start = time.time()
+    for i in range(1000):
+        P4_RingVerify(message_to_use, g2, sigma, PKSsign)
+    time_p4rver_stop = time.time()
+    print("P4 RingSignVerify run-time: ", f'{(time_p4rver_stop-time_p4rver_start)/1000:.10f}')
+
+    time_p4o_start = time.time()
+    for i in range(1000):
+        sigma = P4_RignSign(message_to_use, PKSsign)
+        P4_OnionHiding(message_to_use, sigma, rsa_private_key_p4, PKSenc)
+    time_p4o_stop = time.time()
+    print("P4 OnionHiding run-time: ", f'{(time_p4o_stop-time_p4o_start)/1000:.10f}')
+
+    # 100 ringsigners
+    PKSsign_100 = [(ringsignsk, ringsignpk) for _ in range(100)]
+    PKSsign_1000 = [(ringsignsk, ringsignpk) for _ in range(1000)]
+    PKSsign_10000 = [(ringsignsk, ringsignpk) for _ in range(10000)]
+    PKSenc_100 = [rsa_public_key_p4 for _ in range(100)]
+
+    sigma = P4_RignSign(message_to_use, PKSsign_100)
+
+    time_p4rsig100_start = time.time()
+    P4_RignSign(message_to_use, PKSsign_100)
+    time_p4rsig100_stop = time.time()
+    print("P4 RingSign 100 run-time: ", f'{(time_p4rsig100_stop-time_p4rsig100_start):.10f}')
+
+    time_p4rsig1000_start = time.time()
+    P4_RignSign(message_to_use, PKSsign_1000)
+    time_p4rsig1000_stop = time.time()
+    print("P4 RingSign 1000 run-time: ", f'{(time_p4rsig1000_stop-time_p4rsig1000_start):.10f}')
+
+    time_p4rsig10000_start = time.time()
+    P4_RignSign(message_to_use, PKSsign_10000)
+    time_p4rsig10000_stop = time.time()
+    print("P4 RingSign 10000 run-time: ", f'{(time_p4rsig10000_stop-time_p4rsig10000_start):.10f}')
+
+    time_p4rv100_start = time.time()
+    P4_RingVerify(message_to_use, g2, sigma, PKSsign_100)
+    time_p4rv100_stop = time.time()
+    print("P4 RingVerify 100 run-time: ", f'{(time_p4rv100_stop-time_p4rv100_start):.10f}')
+
+    time_p4rv1000_start = time.time()
+    P4_RingVerify(message_to_use, g2, sigma, PKSsign_1000)
+    time_p4rv1000_stop = time.time()
+    print("P4 RingVerify 1000 run-time: ", f'{(time_p4rv1000_stop-time_p4rv1000_start):.10f}')
+
+    time_p4rv10000_start = time.time()
+    P4_RingVerify(message_to_use, g2, sigma, PKSsign_10000)
+    time_p4rv10000_stop = time.time()
+    print("P4 RingVerify 10000 run-time: ", f'{(time_p4rv10000_stop-time_p4rv10000_start):.10f}')
+
+    time_p4o100_start = time.time()
+    sigma = P4_RignSign(message_to_use, PKSsign)
+    P4_OnionHiding(message_to_use, sigma, rsa_private_key_p4, PKSenc_100)
+    time_p4o100_stop = time.time()
+    print("P4 OnionHiding 100 signers run-time: ", f'{(time_p4o100_stop-time_p4o100_start):.10f}')
