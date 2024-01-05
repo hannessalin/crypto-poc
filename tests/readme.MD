@@ -32,14 +32,21 @@ P2 ADe MPAE-1 run-time:  14.0022385120
 P2 ADe 100 MPAE-1 run-time:  829.5083045959
 P2 ADe 1000 MPAE-1 run-time:  8228.2724380493
 P2 ADe 10000 MPAE-1 run-time:  82221.2438583374
+P2 ADe MPAE-2 run-time:  13.9598813057
+P2 ADe 100 MPAE-2 run-time:  251.5227794647
+P2 ADe 1000 MPAE-2 run-time:  2388.6299133301
+P2 ADe 10000 MPAE-2 run-time:  23746.1309432983
 P3 InitRF run-time:  0.0146908760
 P3 RF run-time:  0.0206773281
 P3 SignRF run-time:  2.2831375599
-P4 RingSign run-time:  1.6597709656
-P4 RingSignVerify run-time:  12.5609371662
-P4 RingSign 100 run-time:  166.0923957825
-P4 RingSign 1000 run-time:  1663.8932228088
-P4 RingSign 10000 run-time:  16612.2429370880
-P4 RingVerify 100 run-time:  688.6856555939
-P4 RingVerify 1000 run-time:  6815.6130313873
-P4 RingVerify 10000 run-time:  68109.3027591705
+P4 RingSign run-time:  1.6651601791
+P4 RingSignVerify run-time:  12.5524535179
+P4 OnionHiding run-time:  8.1380417347
+P4 RingSign 100 run-time:  166.5489673615
+P4 RingSign 1000 run-time:  1666.3630008698
+P4 RingSign 10000 run-time:  16645.9605693817
+P4 RingVerify 100 run-time:  687.2324943542
+P4 RingVerify 1000 run-time:  6808.1600666046
+P4 RingVerify 10000 run-time:  68016.0667896271
+P4 OnionHiding 100 signers run-time:  640.2027606964
+
