@@ -1,1 +1,45 @@
+G1 addition:  0.0088992119
+G2 addition:  0.0126488209
+G1 mul:  0.6245653629
+G2 mul:  1.2021224499
+pairing:  5.7293412685
+Gt: exponent:  0.0261454582
+hash to G1:  0.8706560135
+hash to G2:  1.7974469662
+hash to Z:  0.0062294006
+hash to Z:  0.0047519207
+BLS signing:  1.5029864311
+BLS verifying:  12.3798456192
+AES enc:  0.2900013924
+AES dec:  0.1631383896
+RSA enc:  0.2728397846
+RSA dec:  6.0838866234
 
+P1 Id run-time:  2.2586431503
+P1 Ver run-time:  12.4989552498
+P1 SC run-time:  3.8481881618
+P1 USC run-time:  24.7673728466
+P2 UKeyGen run-time:  0.6372222900
+P2 IPKeyGen run-time:  0.7559437752
+P2 PKeyGen run-time:  0.6696987152
+P2 AEN MPAE-1 run-time:  4.3551943302
+P2 AEN MPAE-2 run-time:  4.2715241909
+P2 MA run-time:  0.0091724396
+P2 MA 100 nodes run-time:  1.2349371910
+P2 MA 1000 nodes run-time:  12.3894283772
+P2 MA 10000 nodes run-time:  124.7235150337
+P2 ADe MPAE-1 run-time:  14.0022385120
+P2 ADe 100 MPAE-1 run-time:  829.5083045959
+P2 ADe 1000 MPAE-1 run-time:  8228.2724380493
+P2 ADe 10000 MPAE-1 run-time:  82221.2438583374
+P3 InitRF run-time:  0.0146908760
+P3 RF run-time:  0.0206773281
+P3 SignRF run-time:  2.2831375599
+P4 RingSign run-time:  1.6597709656
+P4 RingSignVerify run-time:  12.5609371662
+P4 RingSign 100 run-time:  166.0923957825
+P4 RingSign 1000 run-time:  1663.8932228088
+P4 RingSign 10000 run-time:  16612.2429370880
+P4 RingVerify 100 run-time:  688.6856555939
+P4 RingVerify 1000 run-time:  6815.6130313873
+P4 RingVerify 10000 run-time:  68109.3027591705
